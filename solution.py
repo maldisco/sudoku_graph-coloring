@@ -1,17 +1,22 @@
-from mimetypes import init
 from sudoku import Sudoku
 
 
 class Solution:
 
     def __init__(self) -> None:
-
-        self.board = self.getBoard()
-        self.graph = Sudoku()
-        self.mappedGrid = self.__getMappedMatrix()
+        self.board: list[int][int] = self.getBoard()
+        self.sudoku: Sudoku = Sudoku()
+        self.mappedGrid: list[int][int] = self.sudoku.getGridMatrix()
 
     def initialize(self):
-        color = [0] * (self.graph.graph.n+1)
+        """ Initialize numbers pre-generated
+
+        Returns:
+            list[int]: a list that describes the board
+            list[int]: a list that tells what cells were already given
+        """
+
+        color = [0] * (self.sudoku.graph.n+1)
         given = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
@@ -22,10 +27,18 @@ class Solution:
 
         return color, given
 
-    def solve(self, m=9):
+    def solve(self, m: int = 9):
+        """ Apply the algorithm to solve
+
+        Args:
+            m (int, optional): number of colors. Defaults to 9.
+
+        Returns:
+            list[int]: solved sudoku board
+        """
         color, given = self.initialize()
         if (self.__solve(m, color, 1, given) is None):
-            print(":(")
+            print("This board could not be solved.")
             return False
 
         count = 1
@@ -36,8 +49,19 @@ class Solution:
 
         return color
 
-    def __solve(self, m, color, v, given):
-        if v == self.graph.graph.n+1:
+    def __solve(self, m: int, color: list[int], v: int, given: list[int]):
+        """ Recursive function that fills the cells
+
+        Args:
+            m (int): number of colors (or numbers is this case)
+            color (list[int]): the board
+            v (int): current vertex
+            given (list[int]): cells pre-generated
+
+        Returns:
+            bool: success
+        """
+        if v == self.sudoku.graph.n+1:
             return True
 
         for c in range(1, m+1):
@@ -48,30 +72,35 @@ class Solution:
 
             if v not in given:
                 color[v] = 0
-    
-    def __check(self, v, color, c, given):
+
+    def __check(self, v: int, color: list[int], c: int, given: list[int]):
+        """ Check if a cell V can hold a number C
+
+        Args:
+            v (int): cell
+            color (list[int]): board
+            c (int): color
+            given (list[int]): filled cells
+
+        Returns:
+            bool: True if can
+        """
         if v in given and color[v] == c:
             return True
         elif v in given:
             return False
 
-        for i in range(1, self.graph.graph.n+1):
-            if color[i] == c and self.graph.graph.isNeighbour(v, i):
+        for i in range(1, self.sudoku.graph.n+1):
+            if color[i] == c and self.sudoku.graph.isNeighbour(v, i):
                 return False
         return True
 
-    def __getMappedMatrix(self):
-        matrix = [[0 for cols in range(9)]
-                  for rows in range(9)]
-
-        count = 1
-        for rows in range(9):
-            for cols in range(9):
-                matrix[rows][cols] = count
-                count += 1
-        return matrix
-
     def getBoard(self):
+        """ Generate a (not yet) random initial state of the board
+
+        Returns:
+            list[int][int]: 9x9 matrix
+        """
 
         board = [
             [8, 0, 0, 1, 5, 0, 6, 0, 0],
@@ -88,7 +117,8 @@ class Solution:
         return board
 
     def printBoard(self):
-        print("    1 2 3     4 5 6     7 8 9")
+        """ Print current state of the board
+        """
         for i in range(len(self.board)):
             if i % 3 == 0:
                 print("  - - - - - - - - - - - - - - ")
@@ -97,7 +127,7 @@ class Solution:
                 if j % 3 == 0:
                     print(" |  ", end="")
                 if j == 8:
-                    print(self.board[i][j], " | ", i+1)
+                    print(self.board[i][j] if self.board[i][j] != 0 else ' ', " | ")
                 else:
-                    print(f"{ self.board[i][j] } ", end="")
+                    print(f"{ self.board[i][j] if self.board[i][j] != 0 else ' ' } ", end="")
         print("  - - - - - - - - - - - - - - ")

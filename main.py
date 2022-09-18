@@ -1,11 +1,11 @@
 from solution import Solution
 
+# https://medium.com/code-science/sudoku-solver-graph-coloring-8f1b4df47072
+
 s = Solution()
-print("BEFORE SOLVING ...")
-print("\n\n")
+print("INITIAL STATE OF THE BOARD: \n")
 s.printBoard()
-print("\nSolving ...")
-print("\n\n\nAFTER SOLVING ...")
-print("\n\n")
+print("Solving ...")
+print("FINAL STATE OF THE BOARD: \n")
 s.solve(m=9)
 s.printBoard()

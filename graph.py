@@ -38,14 +38,7 @@ class Graph:
         node = Node(idx=idx)
         self.nodes[idx] = node
         return node
-    
-    def addNodeData(self, idx, data):
-        if idx in self.nodes:
-            node = self.nodes[idx]
-            node.setData(data)
-        else:
-            print("No ID to add the data.")
-    
+        
     def addEdge(self, src, dst):
         self.nodes[src].addNeighbour(self.nodes[dst])
         self.nodes[dst].addNeighbour(self.nodes[src])

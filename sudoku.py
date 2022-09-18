@@ -1,8 +1,11 @@
 from graph import Graph
 
 class Sudoku:
+    """ This class holds a sudoku board and a graph representing it
+    """
+
+
     def __init__(self) -> None:
-        
         self.graph = Graph()
         self.rows = 9
         self.cols = 9
@@ -13,83 +16,67 @@ class Sudoku:
         self.allIds = self.graph.getAllNodeIds()
     
     def __generateGraph(self):
+        """ Generate the basic graph (all 81 nodes)
+        """
+
         for idx in range(1, self.total_blocks+1):
             self.graph.addNode(idx)
     
     def connectEdges(self) : 
+        """ connect vertex in the same row, column or 3x3 grid
         """
-        Connect nodes according to Sudoku Constraints : 
-        # ROWS
-       from start of each id number connect all the 
-       successive numbers till you reach a multiple of 9
-        # COLS (add 9 (+9))
-        from start of id number. +9 for each connection
-        till you reach a number >= 73 and <= 81
-        # BLOCKS
-        Connect all the elements in the block which do not 
-        come in the same column or row.
-        1   2   3
-        10  11  12
-        19  20  21
-        1 -> 11, 12, 20, 21
-        2 -> 10, 19, 12, 21
-        3 -> 10, 11, 19, 20 
-        Similarly for 10, 11, 12, 19, 20, 21.
-        """
-        matrix = self.__getGridMatrix()
+        matrix = self.getGridMatrix()
 
-        head_connections = dict() # head : connections
+        head_connections = dict()
 
         for row in range(9) :
             for col in range(9) : 
                 
-                head = matrix[row][col] #id of the node
-                connections = self.__whatToConnect(matrix, row, col)
+                head = matrix[row][col]
+                connections = self.__findConnections(matrix, row, col)
                 
                 head_connections[head] = connections
-        # connect all the edges
 
-        self.__connectThose(head_connections=head_connections)
+        self.__connect(head_connections)
         
-    def __connectThose(self, head_connections) : 
-        for head in head_connections.keys() : #head is the start idx
+    def __connect(self, head_connections : dict) : 
+        """ Connect the nodes 
+
+        Args:
+            head_connections (dict): a dict of dicts that hold all connections in the board
+        """
+        for head in head_connections.keys() : 
             connections = head_connections[head]
-            for key in connections :  #get list of all the connections
+            for key in connections :
                 for v in connections[key] : 
                     self.graph.addEdge(src=head, dst=v)
-
  
-    def __whatToConnect(self, matrix, rows, cols) :
+    def __findConnections(self, matrix : list[int], rows : int, cols : int) :
+        """ Find out what cells will be connected to the cell in given row and col
 
-        """
-        matrix : stores the id of each node representing each cell
-        returns dictionary
-        connections - dictionary
-        rows : [all the ids in the rows]
-        cols : [all the ids in the cols]
-        blocks : [all the ids in the block]
-        
-        ** to be connected to the head.
+        Args:
+            matrix (list[int][int]): board
+            rows (int): cell row
+            cols (int): cell col
+
+        Returns:
+            dict: cells to connect
         """
         connections = dict()
 
         row = []
         col = []
         block = []
-
-        # ROWS
+    
         for c in range(cols+1, 9) : 
             row.append(matrix[rows][c])
         
         connections["rows"] = row
 
-        # COLS 
         for r in range(rows+1, 9):
             col.append(matrix[r][cols])
         
         connections["cols"] = col
-
-        # BLOCKS
         
         if rows%3 == 0 : 
 
@@ -163,7 +150,7 @@ class Sudoku:
         connections["blocks"] = block
         return connections
 
-    def __getGridMatrix(self) : 
+    def getGridMatrix(self) : 
         """
         Generates the 9x9 grid or matrix consisting of node ids.
         
