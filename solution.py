@@ -4,9 +4,9 @@ from sudoku import Sudoku
 class Solution:
 
     def __init__(self) -> None:
-        self.board: list[int][int] = self.getBoard()
+        self.board = self.getBoard()
         self.sudoku: Sudoku = Sudoku()
-        self.mappedGrid: list[int][int] = self.sudoku.getGridMatrix()
+        self.mappedGrid = self.sudoku.getGridMatrix()
 
     def initialize(self):
         """ Initialize numbers pre-generated
@@ -97,7 +97,7 @@ class Solution:
         return True
 
     def getBoard(self):
-        """ Generate a (not yet) random initial state of the board
+        """ Generate initial state of the board
 
         Returns:
             list[int][int]: 9x9 matrix
